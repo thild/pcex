@@ -2,7 +2,7 @@
 Exemplo de código SSE utilizando Intel instrinsics e gcc built-in functions
 
 Compile usando:
-gcc sse.c -o sse -msse -msse4.2
+gcc sse.c -o sse -msse -msse4.2 -O3
 
 
 http://www.songho.ca/misc/sse/sse.html

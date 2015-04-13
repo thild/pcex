@@ -4,6 +4,7 @@
 #include <pmmintrin.h> // SSE3
 #include <smmintrin.h> // SSE4.1
 
+
 int main (int argc, char *argv[])
 {
     int i, y, x, w = 8, h = 5;

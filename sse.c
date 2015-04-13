@@ -1,111 +1,42 @@
-/*
-Exemplo de código SSE utilizando Intel instrinsics e gcc built-in functions
-
-Compile usando:
-gcc sse.c -o sse -msse -msse4.2 -O3
-
-
-http://www.songho.ca/misc/sse/sse.html
-
-https://gcc.gnu.org/onlinedocs/gcc-4.9.2/gcc/X86-Built-in-Functions.html#X86-Built-in-Functions
-https://gcc.gnu.org/onlinedocs/gcc-4.9.2/gcc/Vector-Extensions.html#Vector-Extensions
-https://software.intel.com/sites/landingpage/IntrinsicsGuide/
-https://msdn.microsoft.com/en-us/library/26td21ds.aspx
-
-AVX
-https://software.intel.com/en-us/articles/introduction-to-intel-advanced-vector-extensions/
-
-*/
-
 #include <stdio.h>
-
 #include <xmmintrin.h> // SSE (Required to use the __m128, and __m128d type)
 #include <emmintrin.h> // SSE2 (Required to use the __m128i type)
 #include <pmmintrin.h> // SSE3
 #include <smmintrin.h> // SSE4.1
 
-
-#define VECTOR_SIZE         4
-typedef float v4sf __attribute__ ((vector_size(sizeof(float)*VECTOR_SIZE))); 
-
-typedef union f4vector
-{
-    v4sf    v;
-    float   f[VECTOR_SIZE];
-} f4vector;
-
-
-void add_intel_intrinsics(float *a, float *b, float *c)
-{
-  __m128 va = _mm_load_ps (a);
-  __m128 vb = _mm_load_ps (b);
-  __m128 vc = _mm_add_ps (va, vb);
-  _mm_store_ps(c, vc);
-
-  /* Equivalente Assembly 
-  ** mov eax, a
-  ** mov edx, b 
-  ** mov ecx, c
-  ** movaps xmm0, XMMWORD PTR [eax]
-  ** addps xmm0, XMMWORD PTR [edx]
-  ** movaps XMMWORD PTR [ecx], xmm0
-  */
-}
-
-
-
-v4sf add_gcc_builtin(v4sf a, v4sf b)
-{
-  return __builtin_ia32_addps (a, b);
-}
-
-
-
 int main (int argc, char *argv[])
 {
-  float *a __attribute__ ((aligned(16))) = (float*)malloc (sizeof(float) * 4); //aloca um vetor de 16bytes (128bits) alinhado em endereços múltiplos de 16bytes.
-  float *b __attribute__ ((aligned(16))) = (float*)malloc (sizeof(float) * 4);
-  float *c __attribute__ ((aligned(16))) = (float*)malloc (sizeof(float) * 4);
-  
-  int i = 0;
-  
-  for (i = 0; i < 4; ++i) {
-    a[i] = i;
-    b[i] = i;
-  }
-  
-  printf("Intel SSE\n");
-  
-  add_intel_intrinsics(a, b, c);
+    int i, y, x, w = 8, h = 5;
+    //__m128 c = {10, 10, 10, 10}; ou
+    __m128 c = _mm_set1_ps(10);
+    float *a __attribute__ ((aligned(16))) = (float*) malloc (sizeof(float) * (h * w));
+    float *b;
 
-  for (i = 0; i < 4; ++i) {
-    printf("%f\n", c[i]);
-  }
-  
-  free(a);
-  free(b);
-  free(c);
-  
-  printf("\nGCC Built-in Functions\n");
-  
-  v4sf d, e, f;
+    for(y = 0; y < h; ++y){
+		for(x = 0; x < w; ++x){
+            a[y*w+x] = x + y + 200;
+			printf("%.2f\t",a[y*w+x]);
+		}
+		printf("\n");
+	}
 
-  d = (v4sf){0, 1, 2, 3};
-  e = (v4sf){0, 1, 2, 3};
-  f = add_gcc_builtin(d, e);  
+    b = a;
+    for(y = 0; y < h; ++y){
+		for(x = 0; x < w; ++x){
+			__m128 img = _mm_load_ps(b);
+			__m128 r = _mm_add_ps(img, c);
+			_mm_store_ps(b, r);
+			b += 4;
+		}
+    }
 
-  for (i = 0; i < 4; ++i) {
-    printf("%f\n", f[i]);
-  }
-  
-  
-  printf("\nGCC implicity vectorization\n");
-  
-  f = d + e;  
+    printf("\ndepois\n");
+    for(y = 0; y < h; ++y){
+		for(x = 0; x < w; ++x){
+			printf("%.2f ",a[y*w+x]);
+		}
+		printf("\n");
+	}
 
-  for (i = 0; i < 4; ++i) {
-    printf("%f\n", f[i]);
-  }
-
-  return 0;
+    return 0;
 }

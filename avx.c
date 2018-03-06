@@ -59,9 +59,9 @@ v8sf add_gcc_builtin(v8sf a, v8sf b)
 
 int main (int argc, char *argv[])
 {
-  float *a __attribute__ ((aligned(16))) = (float*)malloc (sizeof(float) * VECTOR_SIZE); //aloca um vetor de 32 bytes (256 bits) alinhado em endereços múltiplos de 16 bytes.
-  float *b __attribute__ ((aligned(16))) = (float*)malloc (sizeof(float) * VECTOR_SIZE);
-  float *c __attribute__ ((aligned(16))) = (float*)malloc (sizeof(float) * VECTOR_SIZE);
+  float *a = (float*)_mm_malloc (sizeof(float) * VECTOR_SIZE, 32); //aloca um vetor de 32 bytes (256 bits) alinhado em endereços múltiplos de 16 bytes.
+  float *b = (float*)_mm_malloc (sizeof(float) * VECTOR_SIZE, 32);
+  float *c = (float*)_mm_malloc (sizeof(float) * VECTOR_SIZE, 32);
   
   int i = 0;
   
@@ -78,9 +78,9 @@ int main (int argc, char *argv[])
     printf("%f\n", c[i]);
   }
   
-  free(a);
-  free(b);
-  free(c);
+  _mm_free(a);
+  _mm_free(b);
+  _mm_free(c);
   
   
   

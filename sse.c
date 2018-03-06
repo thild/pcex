@@ -63,9 +63,9 @@ v4sf add_gcc_builtin(v4sf a, v4sf b)
 
 int main (int argc, char *argv[])
 {
-  float *a __attribute__ ((aligned(16))) = (float*)malloc (sizeof(float) * 4); //aloca um vetor de 16bytes (128bits) alinhado em endereços múltiplos de 16bytes.
-  float *b __attribute__ ((aligned(16))) = (float*)malloc (sizeof(float) * 4);
-  float *c __attribute__ ((aligned(16))) = (float*)malloc (sizeof(float) * 4);
+  float *a = (float*)_mm_malloc (sizeof(float) * 4, 16); //aloca um vetor de 16bytes (128bits) alinhado em endereços múltiplos de 16bytes.
+  float *b = (float*)_mm_malloc (sizeof(float) * 4, 16);
+  float *c = (float*)_mm_malloc (sizeof(float) * 4, 16);
   
   int i = 0;
   
@@ -82,9 +82,9 @@ int main (int argc, char *argv[])
     printf("%f\n", c[i]);
   }
   
-  free(a);
-  free(b);
-  free(c);
+  _mm_free(a);
+  _mm_free(b);
+  _mm_free(c);
   
   printf("\nGCC Built-in Functions\n");
   

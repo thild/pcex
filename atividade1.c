@@ -64,5 +64,9 @@ int main (int argc, char *argv[])
     printf("%f\n", a[i]);
    }
  
+  _mm_free(a);
+  _mm_free(b);
+  _mm_free(c);
+  
   return 0;
 }

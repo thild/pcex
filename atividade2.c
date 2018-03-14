@@ -80,6 +80,26 @@ void produtoEscalar3(float *a, float *b, float *c){
    }
 }
 
+void produtoEscalar4(float *a, float *b, float *c){
+    
+   __m256 va = _mm256_load_ps (a);
+   __m256 vb = _mm256_load_ps (b); 
+   __m256 vc = _mm256_mul_ps(va,vb); // multiplica
+
+  vc = _mm256_hadd_ps(vc,vc);
+  vc = _mm256_hadd_ps(vc,vc);
+
+  vc = _mm256_permute2f128_ps(vc,vc,1);
+
+  //vc = _mm256_add_ps(vc,vc);   
+
+   _mm256_store_ps(c, vc);
+
+ 
+}
+
+
+
 void show(float *c){
   int i;
   for (i = 0; i < 8; ++i) {
@@ -104,7 +124,7 @@ int main (int argc, char *argv[])
    
   }
 
-   produtoEscalar1(a, b, c);
+   produtoEscalar4(a, b, c);
   //produtoEscalar2(a, b, c);
   //produtoEscalar3(a, b, c);
 

@@ -2,6 +2,8 @@
 
 #include <immintrin.h> // AVX
 
+// gcc Atividade2.c -o atividade2 -mavx -O3
+
 void add_intel_intrinsics(float *imgIn, float *imgOut, __m256 bright)
 {
   __m256 vimgIn = _mm256_load_ps (imgIn);

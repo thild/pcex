@@ -60,7 +60,66 @@ v4sf add_gcc_builtin(v4sf a, v4sf b)
 }
 
 
+int indice(int y, int w, int x){
+	return y*w+x;
+}
 
+
+void process(float *a, int h, int w){
+	int y, x;//, h=5,w=8;
+	float *p;
+	p = a;
+	__m128 c = {10,10,10,10};
+	//__m128 *c __attribute__ ((aligned(16))) = (float*)malloc (sizeof(float) * 4);
+	/*for(y=0;y<h;++y){
+		for(x=0;x<w;++x){
+			__m128 img = _mm_load_ps(p);
+			__m128 r = _mm_add_ps(img, c);
+			_mm_store_ps(p, r);
+			p+=4;
+		}
+	}*/
+	int i=0;
+	for(i=0;i<(h*w);i+=4){//++i){
+		__m128 img = _mm_load_ps(p);
+		__m128 r = _mm_add_ps(img, c);
+		_mm_store_ps(p, r);
+		p+=4;
+	}
+		
+}
+
+
+int main(int argc, char *argv[]){
+	float *a __attribute__ ((aligned(16))) = (float*)malloc (sizeof(float) * 40);
+	int y, x, i;
+	int h=5,w=8;
+	for(i=0;i<h*w;++i){
+		a[i] = 10;
+	}
+	for(y=0;y<h;++y){
+		for(x=0;x<w;++x){
+			printf("%.1f ",a[indice(y,w,x)]);
+		}
+		printf("\n");
+	}
+
+	printf("\n\n");
+	process(a, h, w);
+
+	for(y=0;y<h;++y){
+		for(x=0;x<w;++x){
+			printf("%.1f ",a[indice(y,w,x)]);
+		}
+		printf("\n");
+	}
+
+}
+
+
+
+
+/*
 int main (int argc, char *argv[])
 {
   float *a = (float*)_mm_malloc (sizeof(float) * 4, 16); //aloca um vetor de 16bytes (128bits) alinhado em endereços múltiplos de 16bytes.
@@ -109,3 +168,4 @@ int main (int argc, char *argv[])
 
   return 0;
 }
+*/
